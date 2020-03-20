@@ -1,6 +1,9 @@
 package stack
 
-import "errors"
+import (
+	"errors"
+	"reflect"
+)
 
 // Stack implementation based on slise of
 // interface type for using with
@@ -13,14 +16,20 @@ func (s *Stack) IsEmpty() bool {
 }
 
 // Push new data to top of the Stack
-func (s *Stack) Push(e interface{}) {
+func (s *Stack) Push(e interface{}) error {
+	if !(*s).IsEmpty() && (reflect.TypeOf((*s)[0]) != reflect.TypeOf(e)) {
+		ts := reflect.TypeOf((*s)[0])
+		te := reflect.TypeOf(e)
+		return errors.New("invalid operation: mismatched types " + ts.Name() + " and " + te.Name())
+	}
 	*s = append(*s, e)
+	return nil
 }
 
 // Pop remove and return top element
 // of Stack. Return (nil,false) if Stack is empty.
 func (s *Stack) Pop() (interface{}, error) {
-	if s.IsEmpty() {
+	if (*s).IsEmpty() {
 		return nil, errors.New("empty Stack")
 	}
 	end := len(*s) - 1
